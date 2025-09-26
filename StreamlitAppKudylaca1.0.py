@@ -61,9 +61,9 @@ class MorphemicConlluSplitter:
         while prefixes_found and remaining_word:
             prefixes_found = False
         for prefix in self.all_prefixes:
-        if remaining_word.startswith(prefix):
+            if remaining_word.startswith(prefix):
         # Определяем тип префикса
-        if prefix in self.time_prefixes:
+            if prefix in self.time_prefixes:
             morphemes.append((prefix, 'time_prefix'))
         else:  # semantic prefixes
             morphemes.append((prefix, 'semantic_prefix'))
