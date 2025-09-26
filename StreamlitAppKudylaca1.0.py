@@ -60,16 +60,16 @@ class MorphemicConlluSplitter:
         prefixes_found = True
         while prefixes_found and remaining_word:
             prefixes_found = False
-        for prefix in self.all_prefixes:
-            if remaining_word.startswith(prefix):
-        # Определяем тип префикса
-            if prefix in self.time_prefixes:
-            morphemes.append((prefix, 'time_prefix'))
-        else:  # semantic prefixes
-            morphemes.append((prefix, 'semantic_prefix'))
-        remaining_word = remaining_word[len(prefix):]
-        prefixes_found = True
-        break
+            for prefix in self.all_prefixes:
+                if remaining_word.startswith(prefix):
+                    # Определяем тип префикса
+                    if prefix in self.time_prefixes:
+                        morphemes.append((prefix, 'time_prefix'))
+                    else:  # semantic prefixes
+                        morphemes.append((prefix, 'semantic_prefix'))
+                    remaining_word = remaining_word[len(prefix):]
+                    prefixes_found = True
+                    break
         
         # Ищем корни (самый длинный совпадающий корень сначала)
         root_found = False
@@ -161,7 +161,7 @@ class MorphemicConlluSplitter:
                 )
                 
                 # Распределяем по файлам
-                  if morpheme_type in ['time_prefix', 'semantic_prefix', 'suffix']:
+                if morpheme_type in ['time_prefix', 'semantic_prefix', 'suffix']:
                     affix_records.append(conllu_line)
                 elif morpheme_type == 'root' and analysis['root_upos'] == 'NOUN':
                     root_records.append(conllu_line)
@@ -227,10 +227,7 @@ class MorphemicConlluSplitter:
             "# language: kudylaca",
             "# sent_id | form | lemma | upos | xpos | feats | head | deprel | deps | misc",
             ""
-            if mtype == 'time_prefix':
-    morpheme_display.append(f":blue[{form} (время)]")
-elif mtype == 'semantic_prefix':
-    morpheme_display.append(f":green[{form} (семантика)]")
+           
         ]
         
         other_content = [
@@ -259,7 +256,7 @@ elif mtype == 'semantic_prefix':
                 )
                 
                 # Распределяем по файлам
-                if morpheme_type in ['time_prefix', 'suffix']:
+                if morpheme_type in ['time_prefix', 'semantic_prefix', 'suffix']:
                     affix_records.append(conllu_line)
                 elif morpheme_type == 'root' and analysis['root_upos'] == 'NOUN':
                     root_records.append(conllu_line)
@@ -313,7 +310,7 @@ elif mtype == 'semantic_prefix':
         }
         
         # Настраиваем в зависимости от типа морфемы
-        if morpheme_type in ['time_prefix', 'suffix']:
+        if morpheme_type in ['time_prefix', 'semantic_prefix', 'suffix']:
             affix_info = self.affix_features.get(form, {})
             fields['upos'] = affix_info.get('upos', 'PREF' if morpheme_type == 'time_prefix' else 'SUFF')
             fields['feats'] = affix_info.get('feats', '_')
