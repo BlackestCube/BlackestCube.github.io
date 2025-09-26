@@ -210,6 +210,23 @@ class MorphemicConlluSplitter:
         results['other'] = other_path
         
         return results
+
+    def add_word_to_dictionary(self, word: str) -> Dict[str, str]:
+        """Интерактивное добавление слова в словарь с подтверждением пользователя"""
+        # ... весь код метода add_word_to_dictionary ...
+    
+    def _get_word_meanings(self, word: str, analysis: Dict) -> Dict[str, str]:
+        """Запрашивает значения морфем у пользователя"""
+        # ... весь код метода _get_word_meanings ...
+    
+    def _create_dictionary_entries(self, word: str, analysis: Dict, meanings: Dict[str, str]) -> Dict[str, str]:
+        """Создаёт словарные статьи в формате CONLLU"""
+        # ... весь код метода _create_dictionary_entries ...
+    
+    def _create_dictionary_entry(self, form: str, morpheme_type: str, analysis: Dict, 
+                               meanings: Dict[str, str], position: int) -> str:
+        """Создает словарную статью для морфемы"""
+        # ... весь код метода _create_dictionary_entry ...
     
     def generate_conllu_content(self, words: List[str]) -> Dict[str, str]:
         """Генерирует содержимое CONLLU файлов без сохранения на диск"""
@@ -332,23 +349,35 @@ class MorphemicConlluSplitter:
         # Форматируем строку CONLLU
         return f"{fields['id']}\t{fields['form']}\t{fields['lemma']}\t{fields['upos']}\t{fields['xpos']}\t{fields['feats']}\t{fields['head']}\t{fields['deprel']}\t{fields['deps']}\t{fields['misc']}"
 
-    def demonstrate_analysis(self, words: List[str]):
-        """Демонстрация анализа слов"""
-        st.subheader("📊 Результаты морфемного анализа")
+    def demonstrate_analysis(self, words: List[str], dictionary_mode: bool = False):
+        """Демонстрация анализа слов в словарном формате"""
+        st.subheader("📊 Результаты морфемного анализа" + (" (словарный формат)" if dictionary_mode else ""))
         
         for word in words:
             st.write(f"**Слово:** `{word}`")
             analysis = self.analyze_word(word)
             morphemes = analysis['morphemes']
             
-            # Отображаем морфемный разбор
-            morphemes_text = " + ".join([f"{form} ({mtype})" for form, mtype in morphemes])
-            st.write(f"**Морфемный разбор:** {morphemes_text}")
+            if dictionary_mode:
+                # Показываем разбор в словарном стиле
+                with st.expander(f"Словарная статья для: {word}"):
+                    for i, (form, mtype) in enumerate(morphemes, 1):
+                        if mtype == 'root':
+                            meaning = self.noun_roots.get(form, 'значение не указано')
+                            st.write(f"{i}. **{form}** ({mtype}) - {meaning}")
+                        else:
+                            affix_info = self.affix_features.get(form, {})
+                            feats = affix_info.get('feats', 'аффикс')
+                            st.write(f"{i}. {form} ({mtype}) - {feats}")
+            else:
+                # Старый формат отображения
+                morphemes_text = " + ".join([f"{form} ({mtype})" for form, mtype in morphemes])
+                st.write(f"**Морфемный разбор:** {morphemes_text}")
             
-            # Показываем распределение по файлам
+            # Показываем распределение по файлам (оставить без изменений)
             affixes = [f for f, t in morphemes if t in ['time_prefix', 'semantic_prefix', 'suffix']]
             roots = [f for f, t in morphemes if t == 'root' and analysis['root_upos'] == 'NOUN']
-            other = [f for f, t in morphemes if not (t in ['time_prefix', 'suffix'] or 
+            other = [f for f, t in morphemes if not (t in ['time_prefix', 'semantic_prefix', 'suffix'] or 
                                                      (t == 'root' and analysis['root_upos'] == 'NOUN'))]
             
             st.write("**Распределение по файлам CONLLU:**")
@@ -399,9 +428,9 @@ def main():
     st.sidebar.title("Навигация")
     option = st.sidebar.radio(
         "Выберите опцию:",
-        ["🏠 Главная", "🔍 Демонстрация анализа", "📝 Анализ своих слов", "💾 Создание CONLLU файлов"]
+        ["🏠 Главная", "🔍 Демонстрация анализа", "📝 Анализ своих слов", 
+         "📖 Добавление в словарь", "💾 Создание CONLLU файлов"]
     )
-    
     # Главная страница
     if option == "🏠 Главная":
         st.header("Добро пожаловать в систему морфемного анализа!")
@@ -422,7 +451,7 @@ def main():
         # Быстрый тест
         if st.button("🚀 Быстрый тест на примерах"):
             test_words = ["halacayemu", "takulaye", "aketolaye", "gy", "tolacaye"]
-            splitter.demonstrate_analysis(test_words)
+            splitter.demonstrate_analysis(test_words, dictionary_mode=True)
     
     # Демонстрация анализа
     elif option == "🔍 Демонстрация анализа":
@@ -436,7 +465,7 @@ def main():
         test_words = ["halacayemu", "takulaye", "aketolaye", "gy", "tolacaye"]
         
         if st.button("Запустить демонстрацию"):
-            splitter.demonstrate_analysis(test_words)
+            splitter.demonstrate_analysis(test_words, dictionary_mode=True)
     
     # Анализ своих слов
     elif option == "📝 Анализ своих слов":
@@ -460,7 +489,60 @@ def main():
                 splitter.demonstrate_analysis(words)
             else:
                 st.error("Пожалуйста, введите хотя бы одно слово для анализа.")
-    
+        # Новая страница для добавления в словарь
+    elif option == "📖 Добавление в словарь":
+        st.header("📖 Добавление слов в словарь KUDYLACA")
+        
+        st.info("""
+        На этой странице вы можете добавить новые слова в словарь языка KUDYLACA.
+        Процесс добавления:
+        1. Введите слово для анализа
+        2. Проверьте автоматический разбор на морфемы
+        3. Подтвердите правильность разбора
+        4. Укажите значения для новых корней
+        5. Словарные статьи будут сохранены в соответствующие CONLLU файлы
+        """)
+        
+        word = st.text_input("Введите слово для добавления в словарь:", key="dict_word")
+        
+        if word:
+            # Используем новый метод для интерактивного добавления
+            dictionary_entries = splitter.add_word_to_dictionary(word)
+            
+            if dictionary_entries:
+                st.success("✅ Слово успешно добавлено в словарь!")
+                
+                # Показываем созданные словарные статьи
+                st.subheader("Созданные словарные статьи:")
+                
+                tab1, tab2, tab3 = st.tabs(["📁 Аффиксы", "📁 Корни", "📁 Прочее"])
+                
+                with tab1:
+                    st.code(dictionary_entries['affixes'], language="text")
+                    st.download_button(
+                        label="📥 Скачать словарь аффиксов",
+                        data=dictionary_entries['affixes'],
+                        file_name="kudylaca_affixes_dictionary.conllu",
+                        mime="text/plain"
+                    )
+                
+                with tab2:
+                    st.code(dictionary_entries['roots'], language="text")
+                    st.download_button(
+                        label="📥 Скачать словарь корней", 
+                        data=dictionary_entries['roots'],
+                        file_name="kudylaca_roots_dictionary.conllu",
+                        mime="text/plain"
+                    )
+                
+                with tab3:
+                    st.code(dictionary_entries['other'], language="text")
+                    st.download_button(
+                        label="📥 Скачать словарь прочего",
+                        data=dictionary_entries['other'],
+                        file_name="kudylaca_other_dictionary.conllu", 
+                        mime="text/plain"
+                    )
     # Создание CONLLU файлов
     elif option == "💾 Создание CONLLU файлов":
         st.header("Создание CONLLU файлов")
