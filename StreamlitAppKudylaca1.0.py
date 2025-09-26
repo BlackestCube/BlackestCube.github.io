@@ -215,6 +215,14 @@ class MorphemicConlluSplitter:
     
     def generate_conllu_content(self, words: List[str]) -> Dict[str, str]:
         """Генерирует содержимое CONLLU файлов без сохранения на диск"""
+
+    def add_word_to_dictionary(self, word: str) -> Dict[str, str]:
+        """Простая версия для добавления слова в словарь"""
+        return {
+            'affixes': f"# В разработке: {word}",
+            'roots': f"# В разработке: {word}", 
+            'other': f"# В разработке: {word}"
+        }
         
         # Инициализируем содержимое файлов
         affixes_content = [
@@ -240,13 +248,7 @@ class MorphemicConlluSplitter:
         ]
         
         sentence_id = 1
-            def add_word_to_dictionary(self, word: str) -> Dict[str, str]:
-        """Простая версия для добавления слова в словарь"""
-        return {
-            'affixes': f"# В разработке: {word}",
-            'roots': f"# В разработке: {word}", 
-            'other': f"# В разработке: {word}"
-        }
+
         for word in words:
             analysis = self.analyze_word(word)
             morphemes = analysis['morphemes']
