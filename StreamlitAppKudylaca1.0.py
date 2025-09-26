@@ -60,7 +60,7 @@ class MorphemicConlluSplitter:
         prefixes_found = True
         while prefixes_found and remaining_word:
             prefixes_found = False
-           for prefix in self.all_prefixes:
+               for prefix in self.all_prefixes:
           if remaining_word.startswith(prefix):
         # Определяем тип префикса
         if prefix in self.time_prefixes:
