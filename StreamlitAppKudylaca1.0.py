@@ -12,9 +12,11 @@ class MorphemicConlluSplitter:
             'ha': {'upos': 'PREF', 'feats': 'Tense=Past'},
             'ake': {'upos': 'PREF', 'feats': 'Tense=Present'},
             'ka': {'upos': 'PREF', 'feats': 'Tense=Future'},
-            'to': {'upos': 'PREF', 'feats': 'Tense=Future'},
-            'te': {'upos': 'PREF', 'feats': 'Tense=Present'},
-            'ta': {'upos': 'PREF', 'feats': 'Tense=Past'},
+            
+            #Модальные префиксы
+            'to': {'upos': 'PREF', 'feats': 'Aspect=Perf|Polarity=Pos'},  # Наличие, максимализм, совершенность
+            'te': {'upos': 'PREF', 'feats': 'Definite=Ind'},  # Неопределённость
+            'ta': {'upos': 'PREF', 'feats': 'Polarity=Neg'},  # Отсутствие или малость
             
             # Суффиксы
             'ye': {'upos': 'SUFF', 'feats': 'VerbForm=Fin'},
@@ -23,7 +25,12 @@ class MorphemicConlluSplitter:
             'mu': {'upos': 'SUFF', 'feats': 'Derivation=Quality'},
             'pi': {'upos': 'SUFF', 'feats': 'Derivation=Relation'}
         }
-        
+
+        # Списки префиксов по категориям для удобства
+        self.time_prefixes = ['ha', 'ake', 'ka']
+        self.semantic_prefixes = ['to', 'te', 'ta']
+        self.all_prefixes = self.time_prefixes + self.semantic_prefixes
+
         # Словарь корней-существительных
         self.noun_roots = {
             'laca': 'человек', 'tala': 'смерть', 'laa': 'ветер', 
@@ -53,12 +60,16 @@ class MorphemicConlluSplitter:
         prefixes_found = True
         while prefixes_found and remaining_word:
             prefixes_found = False
-            for prefix in ['ake', 'ha', 'ka', 'to', 'te', 'ta']:
-                if remaining_word.startswith(prefix):
-                    morphemes.append((prefix, 'time_prefix'))
-                    remaining_word = remaining_word[len(prefix):]
-                    prefixes_found = True
-                    break
+           for prefix in self.all_prefixes:
+          if remaining_word.startswith(prefix):
+        # Определяем тип префикса
+        if prefix in self.time_prefixes:
+            morphemes.append((prefix, 'time_prefix'))
+        else:  # semantic prefixes
+            morphemes.append((prefix, 'semantic_prefix'))
+        remaining_word = remaining_word[len(prefix):]
+        prefixes_found = True
+        break
         
         # Ищем корни (самый длинный совпадающий корень сначала)
         root_found = False
@@ -150,7 +161,7 @@ class MorphemicConlluSplitter:
                 )
                 
                 # Распределяем по файлам
-                if morpheme_type in ['time_prefix', 'suffix']:
+                  if morpheme_type in ['time_prefix', 'semantic_prefix', 'suffix']:
                     affix_records.append(conllu_line)
                 elif morpheme_type == 'root' and analysis['root_upos'] == 'NOUN':
                     root_records.append(conllu_line)
@@ -216,6 +227,10 @@ class MorphemicConlluSplitter:
             "# language: kudylaca",
             "# sent_id | form | lemma | upos | xpos | feats | head | deprel | deps | misc",
             ""
+            if mtype == 'time_prefix':
+    morpheme_display.append(f":blue[{form} (время)]")
+elif mtype == 'semantic_prefix':
+    morpheme_display.append(f":green[{form} (семантика)]")
         ]
         
         other_content = [
@@ -334,7 +349,7 @@ class MorphemicConlluSplitter:
             st.write(f"**Морфемный разбор:** {morphemes_text}")
             
             # Показываем распределение по файлам
-            affixes = [f for f, t in morphemes if t in ['time_prefix', 'suffix']]
+            affixes = [f for f, t in morphemes if t in ['time_prefix', 'semantic_prefix', 'suffix']]
             roots = [f for f, t in morphemes if t == 'root' and analysis['root_upos'] == 'NOUN']
             other = [f for f, t in morphemes if not (t in ['time_prefix', 'suffix'] or 
                                                      (t == 'root' and analysis['root_upos'] == 'NOUN'))]
