@@ -169,17 +169,6 @@ class MorphemicConlluSplitter:
                     other_records.append(conllu_line)
                 
                 morpheme_position += 1
-
-    def add_word_to_dictionary(self, word: str) -> Dict[str, str]:
-        """Базовая заглушка для метода добавления в словарь"""
-        st.info(f"Функция добавления слова '{word}' в словарь будет реализована в следующей версии")
-        
-        # Возвращаем пустые данные для демонстрации
-        return {
-            'affixes': "# Словарь аффиксов\n# В разработке",
-            'roots': "# Словарь корней\n# В разработке", 
-            'other': "# Словарь прочего\n# В разработке"
-        }
             
             # Добавляем в соответствующие файлы, если есть записи
             if affix_records:
@@ -222,22 +211,7 @@ class MorphemicConlluSplitter:
         
         return results
 
-    def add_word_to_dictionary(self, word: str) -> Dict[str, str]:
-        """Интерактивное добавление слова в словарь с подтверждением пользователя"""
-        # ... весь код метода add_word_to_dictionary ...
-    
-    def _get_word_meanings(self, word: str, analysis: Dict) -> Dict[str, str]:
-        """Запрашивает значения морфем у пользователя"""
-        # ... весь код метода _get_word_meanings ...
-    
-    def _create_dictionary_entries(self, word: str, analysis: Dict, meanings: Dict[str, str]) -> Dict[str, str]:
-        """Создаёт словарные статьи в формате CONLLU"""
-        # ... весь код метода _create_dictionary_entries ...
-    
-    def _create_dictionary_entry(self, form: str, morpheme_type: str, analysis: Dict, 
-                               meanings: Dict[str, str], position: int) -> str:
-        """Создает словарную статью для морфемы"""
-        # ... весь код метода _create_dictionary_entry ...
+
     
     def generate_conllu_content(self, words: List[str]) -> Dict[str, str]:
         """Генерирует содержимое CONLLU файлов без сохранения на диск"""
@@ -266,7 +240,13 @@ class MorphemicConlluSplitter:
         ]
         
         sentence_id = 1
-        
+            def add_word_to_dictionary(self, word: str) -> Dict[str, str]:
+        """Простая версия для добавления слова в словарь"""
+        return {
+            'affixes': f"# В разработке: {word}",
+            'roots': f"# В разработке: {word}", 
+            'other': f"# В разработке: {word}"
+        }
         for word in words:
             analysis = self.analyze_word(word)
             morphemes = analysis['morphemes']
@@ -517,53 +497,15 @@ def main():
         word = st.text_input("Введите слово для добавления в словарь:", key="dict_word")
         
         if word:
-            # Используем новый метод для интерактивного добавления
-    def add_word_to_dictionary(self, word: str) -> Dict[str, str]:
-        """Простая версия добавления слова в словарь"""
-        
-        analysis = self.analyze_word(word)
-        morphemes = analysis['morphemes']
-        
-        st.write(f"**Анализ слова:** {word}")
-        
-        # Показываем разбор
-        for form, mtype in morphemes:
-            st.write(f"- {form} ({mtype})")
-        
-        # Просим подтверждение
-        if st.button("✅ Подтвердить разбор и добавить в словарь"):
-            # Создаем простые словарные статьи
-            return self._create_simple_dictionary_entries(word, analysis)
-        
-        return {}
-
-    def _create_simple_dictionary_entries(self, word: str, analysis: Dict) -> Dict[str, str]:
-        """Создает простые словарные статьи"""
-        
-        entries = {
-            'affixes': ["# Словарь аффиксов KUDYLACA", ""],
-            'roots': ["# Словарь корней KUDYLACA", ""],
-            'other': ["# Словарь прочих элементов KUDYLACA", ""]
-        }
-        
-        for i, (form, mtype) in enumerate(analysis['morphemes'], 1):
-            entry = f"{i}\t{form}\t{form}\tX\t_\t_\t0\troot\t_\tType={mtype}"
+            # Временно простая реализация
+            st.info(f"Слово '{word}' будет добавлено в следующей версии")
+            st.write("Эта функция находится в разработке")
             
-            if mtype in ['time_prefix', 'semantic_prefix', 'suffix']:
-                entries['affixes'].append(entry)
-            elif mtype == 'root':
-                entries['roots'].append(entry)
-            else:
-                entries['other'].append(entry)
-        
-        # Добавляем пример
-        for key in entries:
-            entries[key].extend(["", f"# Пример: {word}", ""])
-        
-        return {k: "\n".join(v) for k, v in entries.items()}
-            
-            if dictionary_entries:
-                st.success("✅ Слово успешно добавлено в словарь!")
+            # Показываем анализ слова
+            analysis = splitter.analyze_word(word)
+            st.write("**Предварительный анализ:**")
+            for form, mtype in analysis['morphemes']:
+                st.write(f"- {form} ({mtype})")
                 
                 # Показываем созданные словарные статьи
                 st.subheader("Созданные словарные статьи:")
