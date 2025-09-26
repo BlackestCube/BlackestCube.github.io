@@ -169,6 +169,17 @@ class MorphemicConlluSplitter:
                     other_records.append(conllu_line)
                 
                 morpheme_position += 1
+
+    def add_word_to_dictionary(self, word: str) -> Dict[str, str]:
+        """Базовая заглушка для метода добавления в словарь"""
+        st.info(f"Функция добавления слова '{word}' в словарь будет реализована в следующей версии")
+        
+        # Возвращаем пустые данные для демонстрации
+        return {
+            'affixes': "# Словарь аффиксов\n# В разработке",
+            'roots': "# Словарь корней\n# В разработке", 
+            'other': "# Словарь прочего\n# В разработке"
+        }
             
             # Добавляем в соответствующие файлы, если есть записи
             if affix_records:
@@ -445,7 +456,7 @@ def main():
         ### Примеры слов для анализа:
         - `halacayemu` - человечен (прошедшее время, деепричастие)
         - `hatalaye` - не идти (прошедшее время)
-        - `aketolaye` - выжить (настоящее/ совершенное)
+        - `aketolaye` - выжил (настоящее/ совершенное)
         """)
         
         # Быстрый тест
@@ -507,7 +518,49 @@ def main():
         
         if word:
             # Используем новый метод для интерактивного добавления
-            dictionary_entries = splitter.add_word_to_dictionary(word)
+    def add_word_to_dictionary(self, word: str) -> Dict[str, str]:
+        """Простая версия добавления слова в словарь"""
+        
+        analysis = self.analyze_word(word)
+        morphemes = analysis['morphemes']
+        
+        st.write(f"**Анализ слова:** {word}")
+        
+        # Показываем разбор
+        for form, mtype in morphemes:
+            st.write(f"- {form} ({mtype})")
+        
+        # Просим подтверждение
+        if st.button("✅ Подтвердить разбор и добавить в словарь"):
+            # Создаем простые словарные статьи
+            return self._create_simple_dictionary_entries(word, analysis)
+        
+        return {}
+
+    def _create_simple_dictionary_entries(self, word: str, analysis: Dict) -> Dict[str, str]:
+        """Создает простые словарные статьи"""
+        
+        entries = {
+            'affixes': ["# Словарь аффиксов KUDYLACA", ""],
+            'roots': ["# Словарь корней KUDYLACA", ""],
+            'other': ["# Словарь прочих элементов KUDYLACA", ""]
+        }
+        
+        for i, (form, mtype) in enumerate(analysis['morphemes'], 1):
+            entry = f"{i}\t{form}\t{form}\tX\t_\t_\t0\troot\t_\tType={mtype}"
+            
+            if mtype in ['time_prefix', 'semantic_prefix', 'suffix']:
+                entries['affixes'].append(entry)
+            elif mtype == 'root':
+                entries['roots'].append(entry)
+            else:
+                entries['other'].append(entry)
+        
+        # Добавляем пример
+        for key in entries:
+            entries[key].extend(["", f"# Пример: {word}", ""])
+        
+        return {k: "\n".join(v) for k, v in entries.items()}
             
             if dictionary_entries:
                 st.success("✅ Слово успешно добавлено в словарь!")
@@ -630,9 +683,9 @@ def main():
     - naro - привет
     
     **Аффиксы времени:**
-    - ha/ta - прошедшее
-    - ake/te - настоящее
-    - ka/to - будущее
+    - ha - прошедшее
+    - ake - настоящее
+    - ka - будущее
 
      **Аффиксы состояния:**
     - ta - Отсутсвие, малость
