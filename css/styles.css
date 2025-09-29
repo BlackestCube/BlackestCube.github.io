@@ -68,68 +68,6 @@ img {
   margin-bottom: 20px;
 }
 
-#advantages ul {
-  list-style-type: none;
-  padding-left: 0;
-}
-
-#advantages ul li {
-  background: #0077b6;
-  color: white;
-  margin: 8px 0;
-  padding: 12px 15px;
-  border-radius: 10px;
-  align-items: center;
-  gap: 10px;
-}
-
-#advantages ul li:hover {
-  background: #03045e;
-}
-
-
-.menu-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 1.5rem 0;
-  border-radius: 14px;
-  overflow: hidden;
-  background: white;
-}
-
-.menu-table th,
-.menu-table td {
-  padding: 1.2rem;
-  text-align: left;
-  border-bottom: 1px solid #caf0f8;
-}
-
-.menu-table th {
-  background: #03045e;
-  color: white;
-  font-weight: 500;
-  font-size: 18px;
-}
-
-.menu-table tr:nth-child(even) {
-  background-color: #d1f7ff;
-}
-
-.menu-table tr:hover {
-  background-color: #bbdefb;
-}
-
-.menu-table td:first-child {
-  font-weight: bold;
-  color: #03045e;
-}
-
-.price {
-  color: #03045e;
-  font-weight: bold;
-  font-size: 1.2rem;
-}
-
 
 footer {
   padding: 20px;
@@ -147,6 +85,3 @@ footer a {
 footer a:hover {
   text-decoration: underline;
 }
-            color: #FFD700; /* Золотым цветом выделяем важный текст */
-            font-weight: bold;
-        }
