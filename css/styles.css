@@ -7,14 +7,14 @@
 body {
   font-family: 'Marck Script', cursive;
   font-size: 16px;
-  color: #2c2c2c;
+  color: #1f0e11;
   line-height: 1.6;
   background: linear-gradient(to bottom right, white, #caf0f8);
 }
 
 header {
   padding: 25px 20px;
-  background: linear-gradient(to right, #0077b6, #03045e);
+  background: linear-gradient(to right, #7b917b, #3caa3c);
   text-align: center;
   
 }
@@ -35,7 +35,7 @@ nav a {
 }
 
 nav a:hover {
-  color: #03045e;
+  color: #3caa3c;
   
 }
 
@@ -52,13 +52,13 @@ section {
 h2 {
   font-size: 26px;
   margin-bottom: 20px;
-  color: #03045e;
+  color: #3caa3c;
   padding-left: 25px;
   gap: 8px;
 }
 
 h3 {
-    color: #03045e;
+    color: #3caa3c;
 }
 
 img {
@@ -71,14 +71,14 @@ img {
 
 footer {
   padding: 20px;
-  background-color: #03045e;
+  background-color: #3caa3c;
   color: white;
   text-align: center;
   margin-top: 50px;
 }
 
 footer a {
-  color: #00b4d8;
+  color: #00abc2;
   text-decoration: none;
 }
 
