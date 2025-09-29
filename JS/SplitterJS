@@ -1,0 +1,64 @@
+// Определяем гласные и согласные
+const vowels = ['a', 'e', 'i', 'o', 'u', 'y'];
+const consonants = [
+    'b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm',
+    'n', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x', 'z'
+];
+
+function splitIntoSyllables(word) {
+    const syllables = [];
+    let currentSyllable = '';
+    
+    for (let i = 0; i < word.length; i++) {
+        const currentChar = word[i];
+        const currentCharLower = currentChar.toLowerCase();
+        
+        currentSyllable += currentChar;
+        
+        const isCurrentVowel = vowels.includes(currentCharLower);
+        const nextChar = i < word.length - 1 ? word[i + 1].toLowerCase() : null;
+        const nextIsVowel = nextChar ? vowels.includes(nextChar) : false;
+        
+        // Если текущий символ - гласная, возможны варианты разделения
+        if (isCurrentVowel) {
+            // Если это последний символ или следующий символ тоже гласная
+            if (!nextChar || nextIsVowel) {
+                syllables.push(currentSyllable);
+                currentSyllable = '';
+            }
+            // Если после гласной идет согласная
+            else if (nextChar && !nextIsVowel) {
+                // Проверяем, есть ли символы после следующего
+                const nextNextChar = i < word.length - 2 ? word[i + 2].toLowerCase() : null;
+                
+                if (!nextNextChar) {
+                    // Если это конец слова, добавляем все в текущий слог
+                    currentSyllable += word[i + 1];
+                    syllables.push(currentSyllable);
+                    currentSyllable = '';
+                    i++; // Пропускаем следующий символ, так как мы его уже добавили
+                } else {
+                    // Если после согласной есть еще символы, завершаем слог на гласной
+                    syllables.push(currentSyllable);
+                    currentSyllable = '';
+                }
+            }
+        }
+    }
+    
+    // Добавляем последний слог, если он остался
+    if (currentSyllable) {
+        syllables.push(currentSyllable);
+    }
+    
+    return syllables;
+}
+
+// Переменная с входным словом для разбора
+const inputSplit = "example"; // Можете изменить на любое другое слово
+
+// Разбиваем слово на слоги и выводим результат
+const syllables = splitIntoSyllables(inputSplit);
+console.log(`Слово: ${inputSplit}`);
+console.log(`Слоги: ${syllables.join(' - ')}`);
+console.log(`Массив слогов:`, syllables);
