@@ -1,1 +1,80 @@
 
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Marck Script', cursive;
+  font-size: 16px;
+  color: #2c2c2c;
+  line-height: 1.6;
+  background: linear-gradient(to bottom right, white, #caf0f8);
+}
+
+header {
+  padding: 25px 20px;
+  background: linear-gradient(to right, #0077b6, #03045e);
+  text-align: center;
+  
+}
+
+header h1,
+header h2 {
+  font-size: 36px;
+  margin-bottom: 10px;
+  color: white;
+}
+
+nav a {
+  margin: 0 15px;
+  text-decoration: none;
+  font-size: 20px;
+  color: white;
+  
+}
+
+nav a:hover {
+  color: #03045e;
+  
+}
+
+main {
+  padding: 30px 20px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+section {
+  margin-bottom: 60px;
+}
+
+h2 {
+  font-size: 26px;
+  margin-bottom: 20px;
+  color: #03045e;
+  padding-left: 25px;
+  gap: 8px;
+}
+
+h3 {
+    color: #03045e;
+}
+
+footer {
+  padding: 20px;
+  background-color: #03045e;
+  color: white;
+  text-align: center;
+  margin-top: 50px;
+}
+
+footer a {
+  color: #00b4d8;
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
