@@ -1,0 +1,53 @@
+const mysql = require('mysql2');
+
+// Настройка подключения к БД
+const connection = mysql.createConnection({
+  host: 'localhost',
+  user: 'ваш_пользователь',
+  password: 'ваш_пароль',
+  database: 'ваша_база_данных'
+});
+
+// Массив слогов для проверки
+const syllables = [];
+
+// Функция для проверки слогов
+async function checkSyllables(syllablesArray) {
+  try {
+    // Создаем плейсхолдеры для запроса
+    const placeholders = syllablesArray.map(() => '?').join(',');
+    
+    const [rows] = await connection.promise().query(
+      `SELECT * FROM syllables_table 
+       WHERE syllable IN (${placeholders})`,
+      syllablesArray
+    );
+
+    // Формируем результат
+    const results = {};
+    rows.forEach(row => {
+      results[row.syllable] = row; // Вся информация из БД
+    });
+
+    // Добавляем отсутствующие слоги
+    syllablesArray.forEach(syllable => {
+      if (!results[syllable]) {
+        results[syllable] = 'Не найдено в базе данных';
+      }
+    });
+
+    return results;
+  } catch (error) {
+    console.error('Ошибка запроса:', error);
+    throw error;
+  }
+}
+
+// Использование
+checkSyllables(syllables)
+  .then(result => {
+    console.log('Результаты поиска:');
+    console.log(result);
+  })
+  .catch(console.error)
+  .finally(() => connection.end());
